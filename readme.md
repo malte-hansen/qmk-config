@@ -1,36 +1,37 @@
-# Quantum Mechanical Keyboard Firmware
+# Corne QMK Firmware
 
-[![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
-[![Discord](https://img.shields.io/discord/440868230475677696.svg)](https://discord.gg/qmk)
-[![Docs Status](https://img.shields.io/badge/docs-ready-orange.svg)](https://docs.qmk.fm)
-[![GitHub contributors](https://img.shields.io/github/contributors/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/pulse/monthly)
-[![GitHub forks](https://img.shields.io/github/forks/qmk/qmk_firmware.svg?style=social&label=Fork)](https://github.com/qmk/qmk_firmware/)
+[![Build Status](https://github.com/malte-hansen/qmk-config/actions/workflows/firmware.yml/badge.svg?branch=main)](https://github.com/malte-hansen/qmk-config/actions/workflows/firmware.yml)
 
-This is a keyboard firmware based on the [tmk\_keyboard firmware](https://github.com/tmk/tmk_keyboard) with some useful features for Atmel AVR and ARM controllers, and more specifically, the [OLKB product line](https://olkb.com), the [ErgoDox EZ](https://ergodox-ez.com) keyboard, and the Clueboard product line.
+This QMK fork contains the [`malte_hansen` keymap](keyboards/mechboards/crkbd/pro/keymaps/malte_hansen/) for the [Mechboards CRKBD Pro](keyboards/mechboards/crkbd/pro/), a 42-key split Corne. The QMK target is `mechboards/crkbd/pro`. The keymap selects the `sparkfun_pm2040` converter for the RP2040 controllers.
 
-## Documentation
+## Layout
 
-* [See the official documentation on docs.qmk.fm](https://docs.qmk.fm)
+The default macOS layer uses Colemak-DH letter positions. Holding a home-row mod-tap key activates Control, Option, Command, or Shift. Holding the rightmost thumb key sends Hyper (Control, Option, Shift, and Command). Tapping it sends Delete.
 
-The docs are powered by [VitePress](https://vitepress.dev/). They are also viewable offline; see [Previewing the Documentation](https://docs.qmk.fm/#/contributing?id=previewing-the-documentation) for more details.
+| Hold this key | Layer | Main bindings |
+| --- | --- | --- |
+| Escape | Window shortcuts | Hyper-modified window management on Mac |
+| Backspace | Numbers | Right-hand number pad and left-hand navigation |
+| Tab | Functions | F1–F15, media, volume, and brightness |
+| Enter | Navigation | Right-hand arrows, Home, End, Page Up, and Page Down |
+| Space | Symbols | Punctuation, brackets, and operators |
 
-You can request changes by making a fork and opening a [pull request](https://github.com/qmk/qmk_firmware/pulls).
+## Build
 
-## Supported Keyboards
+Install the QMK CLI and ARM toolchain using the [QMK setup guide](https://docs.qmk.fm/newbs_getting_started). From this checkout, initialize the submodules and compile the keymap.
 
-* [Planck](/keyboards/planck/)
-* [Preonic](/keyboards/preonic/)
-* [ErgoDox EZ](/keyboards/ergodox_ez/)
-* [Clueboard](/keyboards/clueboard/)
-* [Cluepad](/keyboards/clueboard/17/)
-* [Atreus](/keyboards/atreus/)
+```sh
+git submodule update --init --recursive
+qmk compile -kb mechboards/crkbd/pro -km malte_hansen
+```
 
-The project also includes community support for [lots of other keyboards](/keyboards/).
+The build writes `mechboards_crkbd_pro_malte_hansen.uf2` to the repository root.
 
-## Maintainers
+The [Build Corne Pro firmware workflow](https://github.com/malte-hansen/qmk-config/actions/workflows/firmware.yml) runs on pushes to `main`, pull requests targeting `main`, and manual dispatches. Open a successful run and download the `mechboards_crkbd_pro_malte_hansen` artifact to get the same UF2.
 
-QMK is developed and maintained by Jack Humbert of OLKB with contributions from the community, and of course, [Hasu](https://github.com/tmk). The OLKB product firmwares are maintained by [Jack Humbert](https://github.com/jackhumbert), the Ergodox EZ by [ZSA Technology Labs](https://github.com/zsa), the Clueboard by [Zach White](https://github.com/skullydazed), and the Atreus by [Phil Hagelberg](https://github.com/technomancy).
+## Flash both halves
 
-## Official Website
-
-[qmk.fm](https://qmk.fm) is the official website of QMK, where you can find links to this page, the documentation, and the keyboards supported by QMK.
+1. Unplug USB and disconnect the TRRS cable.
+2. Connect one half over USB and double-tap the reset button below its TRRS jack. You can also hold the controller’s BOOTSEL button while plugging in USB.
+3. Copy `mechboards_crkbd_pro_malte_hansen.uf2` to the `RPI-RP2` drive. The controller reboots and the drive disappears.
+4. Repeat with the same UF2 on the other half. With USB unplugged, reconnect the TRRS cable, then plug USB into the left half.

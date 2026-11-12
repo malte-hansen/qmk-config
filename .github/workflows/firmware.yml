@@ -1,0 +1,31 @@
+name: Build Corne Pro firmware
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli:latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Compile the Corne Pro keymap
+        run: qmk compile -kb mechboards/crkbd/pro -km malte_hansen
+
+      - name: Upload the flashable firmware
+        uses: actions/upload-artifact@v7
+        with:
+          name: mechboards_crkbd_pro_malte_hansen
+          path: mechboards_crkbd_pro_malte_hansen.uf2
+          if-no-files-found: error
