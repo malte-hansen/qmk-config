@@ -24,13 +24,19 @@ enum layer_names {
 // Homerow mod-tap for symbol layer
 #define MT_LC_AS MT(MOD_LCTL, KC_AT) // at
 #define MT_LA_RS MT(MOD_LALT, KC_MINUS)
-#define MT_LG_SS MT(MOD_LGUI, KC_PLUS) // Plus
+#define MT_LG_SS KC_PLUS // Plus
+// #define MT_LG_SS MT(MOD_LGUI, KC_F16) // Plus
 #define MT_LS_TS MT(MOD_LSFT, KC_EQUAL)
 // --
-#define MT_RS_NS MT(MOD_RSFT, KC_LPRN) // (
-#define MT_RG_ES MT(MOD_RGUI, KC_LCBR) // {
-#define MT_RA_IS MT(MOD_RALT, KC_RCBR) // }
-#define MT_RC_OS MT(MOD_RCTL, KC_RPRN) // )
+#define MT_RS_NS KC_LPRN // (
+// #define MT_RS_NS MT(MOD_RSFT, KC_LPRN) // (
+#define MT_RG_ES KC_LCBR // {
+// #define MT_RG_ES MT(MOD_RGUI, KC_LCBR) // {
+#define MT_RA_IS KC_RCBR // }
+// #define MT_RA_IS MT(MOD_RALT, KC_RCBR) // }
+#define MT_RC_OS KC_RPRN // )
+// #define MT_RC_OS MT(MOD_RCTL, KC_RPRN) // )
+
 
 // Hyper key definition
 #define MT_RG_DEL ALL_T(KC_DEL) // Hyper + Delete
@@ -56,7 +62,7 @@ enum layer_names {
 #define S_G_A_C_O  LCTL(LSFT(LALT(LGUI(KC_O))))
 
 // Helper macro
-#define LSG_A(kc) LCTL(LALT(LSFT(LGUI(kc)))) // If you need this form, otherwise replace inline
+#define LSG_A(kc) LCTL(LALT(LSFT(LGUI(kc))))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_MAC] = LAYOUT_split_3x6_3(
@@ -73,11 +79,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [_SYM] = LAYOUT_split_3x6_3(
     //,----------------------------------------------------------.      .--------------------------------------------------------.
-        KC_LSFT, KC_GRAVE, KC_QUOTE, KC_DQUO,  KC_CIRC,  KC_LT,          KC_GT,   KC_EXLM,  KC_AMPR,  KC_PIPE,  KC_QUES,  KC_RSFT,
+        KC_LGUI, KC_GRAVE, KC_QUOTE, KC_DQUO,  KC_CIRC,  KC_LT,          KC_GT,   KC_EXLM,  KC_AMPR,  KC_PIPE,  KC_QUES,  KC_RGUI,
     //|---------+--------+---------+--------+---------+----------|      |--------+---------+---------+---------+--------+--------|
-        KC_TAB,  MT_LC_AS, MT_LA_RS, MT_LG_SS, MT_LS_TS, KC_PAST,        KC_TILD, MT_RS_NS, MT_RG_ES, MT_RA_IS, MT_RC_OS, KC_RSFT,
+        KC_LALT, MT_LC_AS, MT_LA_RS, MT_LG_SS, MT_LS_TS, KC_PAST,        KC_TILD, MT_RS_NS, MT_RG_ES, MT_RA_IS, MT_RC_OS, KC_RALT,
     //|---------+--------+---------+--------+---------+----------|      |--------+---------+---------+---------+--------+--------|
-        KC_LSFT, KC_SLSH,  KC_UNDS,  KC_PERC,  KC_DLR,   KC_HASH,        KC_BSLS, KC_LBRC,  KC_COLN,  KC_SCLN,  KC_RBRC,  KC_RSFT,
+        KC_LCTL, KC_SLSH,  KC_UNDS,  KC_PERC,  KC_DLR,   KC_HASH,        KC_BSLS, KC_LBRC,  KC_COLN,  KC_SCLN,  KC_RBRC,  KC_RCTL,
     //|---------+--------+---------+--------+---------+----------|      |--------+---------+---------+---------+--------+--------|
                                      TO(_MAC), KC_BSPC,  KC_TAB,         KC_ENT,  KC_SPC,   MT_RG_DEL
                                   //`----------------------------'       `---------------------------'
@@ -121,10 +127,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;        // Return false to ignore further processing of key
             }
             break;
-        case LCTL_T(KC_PLUS):
-            if (record->tap.count && record->event.pressed) {
-                tap_code16(KC_PLUS); // Send KC_PLUS on tap
-                return false;        // Return false to ignore further processing of key
+        case KC_F16: // This is the keycode tapped by MT_LG_SS
+            if (record->event.pressed) {
+                if (record->tap.count > 0) { // Check if it was a tap
+                    tap_code16(LSFT(KC_EQUAL)); // Send Shift + Equal for '+'
+                    return false; // Prevent further processing
+                }
             }
             break;
         case LCTL_T(KC_LPRN):
