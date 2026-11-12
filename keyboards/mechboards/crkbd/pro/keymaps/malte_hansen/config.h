@@ -1,0 +1,6 @@
+#pragma once
+
+#define TAPPING_TERM_PER_KEY
+#define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+#define COMBO_TERM 50
+#define COMBO_ONLY_FROM_LAYER 0
